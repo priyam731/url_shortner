@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
@@ -10,11 +11,11 @@ const staticRoute = require("./routes/staticRouter");
 const userRoute = require("./routes/user");
 
 const app = express();
-const PORT = 8001;
+const PORT = process.env.PORT || 8001;
 
-connectToMongoDB(process.env.MONGODB ?? "mongodb://localhost:27017/short-url").then(() =>
-  console.log("Mongodb connected")
-);
+connectToMongoDB(
+  process.env.MONGODB ?? "mongodb://localhost:27017/short-url",
+).then(() => console.log("Mongodb connected"));
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
@@ -39,7 +40,7 @@ app.get("/url/:shortId", async (req, res) => {
           timestamp: Date.now(),
         },
       },
-    }
+    },
   );
   res.redirect(entry.redirectURL);
 });
