@@ -13,9 +13,12 @@ const userRoute = require("./routes/user");
 const app = express();
 const PORT = process.env.PORT || 8001;
 
-connectToMongoDB(
-  process.env.MONGODB ?? "mongodb://localhost:27017/short-url",
-).then(() => console.log("Mongodb connected"));
+connectToMongoDB(process.env.MONGODB ?? "mongodb://localhost:27017/short-url")
+  .then(() => console.log("MongoDB Atlas connected successfully"))
+  .catch((err) => {
+    console.error("MongoDB connection failed:", err.message);
+    process.exit(1);
+  });
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
@@ -45,4 +48,8 @@ app.get("/url/:shortId", async (req, res) => {
   res.redirect(entry.redirectURL);
 });
 
-app.listen(PORT, () => console.log(`Server Started at PORT:${PORT}`));
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => console.log(`Server Started at PORT:${PORT}`));
+}
+
+module.exports = app;
